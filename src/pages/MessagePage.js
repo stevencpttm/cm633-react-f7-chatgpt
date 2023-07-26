@@ -19,6 +19,7 @@ export default () => {
   const [messageText, setMessageText] = useState("");
   // const [messagesData, setMessagesData] = useState([]);
   const messagesData = useStore("messagesData");
+  const temperature = useStore("temperature");
 
   useEffect(() => {
     f7ready(() => {
@@ -92,7 +93,7 @@ export default () => {
       },
       body: JSON.stringify({
         model: "gpt-3.5-turbo",
-        temperature: 0.7,
+        temperature: temperature,
         messages: newMessagesData
           .map((message) => {
             return {
@@ -123,7 +124,11 @@ export default () => {
 
   return (
     <Page>
-      <Navbar title="Messages"></Navbar>
+      <Navbar title="Messages">
+        <Link slot="left" href="/settings/">
+          Setting
+        </Link>
+      </Navbar>
 
       <Messagebar
         value={messageText}
@@ -135,7 +140,7 @@ export default () => {
       </Messagebar>
 
       <Messages>
-        <MessagesTitle>Conversation</MessagesTitle>
+        <MessagesTitle>Temperature: {temperature}</MessagesTitle>
 
         {messagesData.map((message, index) => (
           <Message

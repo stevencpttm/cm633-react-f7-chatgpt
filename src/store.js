@@ -11,12 +11,18 @@ const getters = {
   messagesData({ state }) {
     return state.messagesData;
   },
+  temperature({ state }) {
+    return state.temperature;
+  },
 };
 
 // Define Actions
 const actions = {
   setMessagesData({ state }, newValue) {
     state.messagesData = newValue;
+  },
+  setTemperature({ state }, newValue) {
+    state.temperature = newValue;
   },
 };
 
