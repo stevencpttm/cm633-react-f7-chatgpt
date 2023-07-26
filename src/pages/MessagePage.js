@@ -20,6 +20,7 @@ export default () => {
   // const [messagesData, setMessagesData] = useState([]);
   const messagesData = useStore("messagesData");
   const temperature = useStore("temperature");
+  const context = useStore("context");
 
   useEffect(() => {
     f7ready(() => {
@@ -101,7 +102,7 @@ export default () => {
               content: message.text,
             };
           })
-          .slice(-4), // TODO
+          .slice(context * -1),
       }),
     });
 
@@ -140,7 +141,9 @@ export default () => {
       </Messagebar>
 
       <Messages>
-        <MessagesTitle>Temperature: {temperature}</MessagesTitle>
+        <MessagesTitle>
+          Temperature: {temperature}, Context: {context}
+        </MessagesTitle>
 
         {messagesData.map((message, index) => (
           <Message
