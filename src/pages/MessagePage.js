@@ -88,6 +88,9 @@ export default ({ id }) => {
       conversationId: id,
     });
 
+    // update lastMessage to user's message
+    updateConversationProperty("lastMessage", text);
+
     setMessagesData(newMessagesData);
     setMessageText("");
 
@@ -134,6 +137,9 @@ export default ({ id }) => {
       });
 
       setMessagesData(newMessagesData);
+
+      // update lastMessage to ChatGPT's reply
+      updateConversationProperty("lastMessage", replyFromChatGPT);
     }
 
     // Stop loading indicator
@@ -144,6 +150,15 @@ export default ({ id }) => {
     return messagesData.filter((message) => {
       return message.conversationId === id;
     });
+  };
+
+  const updateConversationProperty = (property, value) => {
+    const newConversations = [...conversations];
+    const theConversation = newConversations.find((item) => {
+      return item.id === id;
+    });
+    theConversation[property] = value;
+    f7.store.dispatch("setConversations", newConversations);
   };
 
   return (
