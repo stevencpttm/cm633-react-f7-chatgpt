@@ -2,22 +2,7 @@ import { createStore } from "framework7/lite";
 
 // Define States
 let state = {
-  conversations: [
-    {
-      id: "0123456789",
-      name: "(Conversation Name)",
-      prompt: "You are my english teacher",
-      lastMessage: "....",
-      updatedAt: "2023-08-02 19:13:00",
-    },
-    {
-      id: "9876543210",
-      name: "(Conversation Name 2)",
-      prompt: "You are my english teacher",
-      lastMessage: "....",
-      updatedAt: "2023-08-02 19:13:00",
-    },
-  ],
+  conversations: [],
   messagesData: [],
   temperature: 0.7,
   context: 6,

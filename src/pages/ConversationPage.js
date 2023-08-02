@@ -8,6 +8,7 @@ import {
   f7,
   useStore,
 } from "framework7-react";
+import { v4 as uuidv4 } from "uuid";
 
 const ConversationPage = () => {
   const temperature = useStore("temperature");
@@ -21,11 +22,26 @@ const ConversationPage = () => {
     f7.store.dispatch("setContext", value);
   };
 
+  const createConversation = () => {
+    f7.store.dispatch("setConversations", [
+      ...conversations,
+      {
+        id: uuidv4(),
+        name: "(Untitled)",
+        prompt: "",
+        lastMessage: "",
+        updatedAt: new Date().toISOString(),
+      },
+    ]);
+  };
+
   return (
     <>
       <Page>
         <Navbar title="Conversation">
-          <Link slot="right">Create</Link>
+          <Link slot="right" onClick={createConversation}>
+            Create
+          </Link>
         </Navbar>
 
         <List dividersIos mediaList outlineIos strongIos>
@@ -34,8 +50,8 @@ const ConversationPage = () => {
               key={conversation.id}
               link="#"
               title={conversation.name}
-              subtitle={conversation.prompt}
-              text={conversation.lastMessage}
+              subtitle={conversation.prompt || "(prompt not set)"}
+              text={conversation.lastMessage || "-"}
             />
           ))}
         </List>
