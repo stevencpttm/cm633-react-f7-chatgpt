@@ -4,8 +4,8 @@ import { createStore } from "framework7/lite";
 let state = {
   conversations: [],
   messagesData: [],
-  temperature: 0.7,
-  context: 6,
+  // temperature: 0.7,
+  // context: 6,
 };
 
 // Define Getters
@@ -16,12 +16,12 @@ const getters = {
   messagesData({ state }) {
     return state.messagesData;
   },
-  temperature({ state }) {
-    return state.temperature;
-  },
-  context({ state }) {
-    return state.context;
-  },
+  // temperature({ state }) {
+  //   return state.temperature;
+  // },
+  // context({ state }) {
+  //   return state.context;
+  // },
 };
 
 // Define Actions
@@ -32,12 +32,12 @@ const actions = {
   setMessagesData({ state }, newValue) {
     state.messagesData = newValue;
   },
-  setTemperature({ state }, newValue) {
-    state.temperature = newValue;
-  },
-  setContext({ state }, newValue) {
-    state.context = newValue;
-  },
+  // setTemperature({ state }, newValue) {
+  //   state.temperature = newValue;
+  // },
+  // setContext({ state }, newValue) {
+  //   state.context = newValue;
+  // },
 };
 
 if (typeof window !== "undefined") {

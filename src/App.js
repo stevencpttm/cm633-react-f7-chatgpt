@@ -34,11 +34,11 @@ const f7params = {
       component: DataPage,
     },
     {
-      path: "/message/",
+      path: "/message/:id/",
       component: MessagePage,
     },
     {
-      path: "/settings/",
+      path: "/setting/:id/",
       component: SettingPage,
     },
     {

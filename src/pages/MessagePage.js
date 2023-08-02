@@ -14,17 +14,28 @@ import {
 
 const OPENAI_API_KEY = process.env.REACT_APP_OPENAI_API_KEY;
 
-export default () => {
+export default ({ id }) => {
   const [typingMessage, setTypingMessage] = useState(false);
   const [messageText, setMessageText] = useState("");
-  // const [messagesData, setMessagesData] = useState([]);
+
+  const conversations = useStore("conversations");
   const messagesData = useStore("messagesData");
-  const temperature = useStore("temperature");
-  const context = useStore("context");
+
+  const [conversation, setConversation] = useState(null);
+
+  // const temperature = useStore("temperature");
+  // const context = useStore("context");
 
   useEffect(() => {
     f7ready(() => {
-      //
+      // load corresponding conversation
+      const theConversation = conversations.find((item) => {
+        return item.id === id;
+      });
+
+      if (theConversation) {
+        setConversation(theConversation);
+      }
     });
   }, []);
 
@@ -96,7 +107,7 @@ export default () => {
         },
         body: JSON.stringify({
           model: "gpt-3.5-turbo",
-          temperature: temperature,
+          temperature: conversation?.temperature,
           messages: newMessagesData
             .map((message) => {
               return {
@@ -104,7 +115,7 @@ export default () => {
                 content: message.text,
               };
             })
-            .slice(context * -1),
+            .slice(conversation?.context * -1),
         }),
       }
     );
@@ -128,8 +139,8 @@ export default () => {
 
   return (
     <Page>
-      <Navbar title="Messages">
-        <Link slot="left" href="/settings/">
+      <Navbar title="Messages" backLink="Back">
+        <Link slot="right" href={`/setting/${id}/`}>
           Setting
         </Link>
       </Navbar>
@@ -145,7 +156,8 @@ export default () => {
 
       <Messages>
         <MessagesTitle>
-          Temperature: {temperature}, Context: {context}
+          ID: {id}, Temperature: {conversation?.temperature}, Context:{" "}
+          {conversation?.context}
         </MessagesTitle>
 
         {messagesData.map((message, index) => (

@@ -11,16 +11,7 @@ import {
 import { v4 as uuidv4 } from "uuid";
 
 const ConversationPage = () => {
-  const temperature = useStore("temperature");
-  const context = useStore("context");
   const conversations = useStore("conversations");
-
-  const setTemperature = (value) => {
-    f7.store.dispatch("setTemperature", value);
-  };
-  const setContext = (value) => {
-    f7.store.dispatch("setContext", value);
-  };
 
   const createConversation = () => {
     f7.store.dispatch("setConversations", [
@@ -29,6 +20,8 @@ const ConversationPage = () => {
         id: uuidv4(),
         name: "(Untitled)",
         prompt: "",
+        temperature: 0.7,
+        context: 6,
         lastMessage: "",
         updatedAt: new Date().toISOString(),
       },
@@ -48,7 +41,7 @@ const ConversationPage = () => {
           {conversations.map((conversation) => (
             <ListItem
               key={conversation.id}
-              link="#"
+              link={`/message/${conversation.id}/`}
               title={conversation.name}
               subtitle={conversation.prompt || "(prompt not set)"}
               text={conversation.lastMessage || "-"}
