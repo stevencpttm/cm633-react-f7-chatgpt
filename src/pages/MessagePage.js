@@ -23,9 +23,6 @@ export default ({ id }) => {
 
   const [conversation, setConversation] = useState(null);
 
-  // const temperature = useStore("temperature");
-  // const context = useStore("context");
-
   useEffect(() => {
     f7ready(() => {
       // load corresponding conversation
@@ -88,6 +85,7 @@ export default ({ id }) => {
     newMessagesData.push({
       type: "sent",
       text: text,
+      conversationId: id,
     });
 
     setMessagesData(newMessagesData);
@@ -108,14 +106,18 @@ export default ({ id }) => {
         body: JSON.stringify({
           model: "gpt-3.5-turbo",
           temperature: conversation?.temperature,
-          messages: newMessagesData
-            .map((message) => {
-              return {
-                role: message.type === "sent" ? "user" : "assistant",
-                content: message.text,
-              };
-            })
-            .slice(conversation?.context * -1),
+          messages: [
+            { role: "system", content: conversation?.prompt },
+            ...newMessagesData
+              .filter((message) => message.conversationId === id)
+              .map((message) => {
+                return {
+                  role: message.type === "sent" ? "user" : "assistant",
+                  content: message.text,
+                };
+              })
+              .slice(conversation?.context * -1),
+          ],
         }),
       }
     );
@@ -128,6 +130,7 @@ export default ({ id }) => {
       newMessagesData.push({
         type: "received",
         text: replyFromChatGPT,
+        conversationId: id,
       });
 
       setMessagesData(newMessagesData);
@@ -135,6 +138,12 @@ export default ({ id }) => {
 
     // Stop loading indicator
     setTypingMessage(false);
+  };
+
+  const filteredMessageData = () => {
+    return messagesData.filter((message) => {
+      return message.conversationId === id;
+    });
   };
 
   return (
@@ -160,7 +169,7 @@ export default ({ id }) => {
           {conversation?.context}
         </MessagesTitle>
 
-        {messagesData.map((message, index) => (
+        {filteredMessageData().map((message, index) => (
           <Message
             key={index}
             type={message.type}
