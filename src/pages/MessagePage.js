@@ -86,25 +86,28 @@ export default () => {
     setTypingMessage(true);
 
     // ChatGPT API
-    const response = await fetch(`https://api.openai.com/v1/chat/completions`, {
-      method: "post",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${OPENAI_API_KEY}`,
-      },
-      body: JSON.stringify({
-        model: "gpt-3.5-turbo",
-        temperature: temperature,
-        messages: newMessagesData
-          .map((message) => {
-            return {
-              role: message.type === "sent" ? "user" : "assistant",
-              content: message.text,
-            };
-          })
-          .slice(context * -1),
-      }),
-    });
+    const response = await fetch(
+      `https://cm633.fluentgpt.app/openai/v1/chat/completions`,
+      {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${OPENAI_API_KEY}`,
+        },
+        body: JSON.stringify({
+          model: "gpt-3.5-turbo",
+          temperature: temperature,
+          messages: newMessagesData
+            .map((message) => {
+              return {
+                role: message.type === "sent" ? "user" : "assistant",
+                content: message.text,
+              };
+            })
+            .slice(context * -1),
+        }),
+      }
+    );
 
     const data = await response.json();
 
