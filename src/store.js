@@ -2,6 +2,22 @@ import { createStore } from "framework7/lite";
 
 // Define States
 let state = {
+  conversations: [
+    {
+      id: "0123456789",
+      name: "(Conversation Name)",
+      prompt: "You are my english teacher",
+      lastMessage: "....",
+      updatedAt: "2023-08-02 19:13:00",
+    },
+    {
+      id: "9876543210",
+      name: "(Conversation Name 2)",
+      prompt: "You are my english teacher",
+      lastMessage: "....",
+      updatedAt: "2023-08-02 19:13:00",
+    },
+  ],
   messagesData: [],
   temperature: 0.7,
   context: 6,
@@ -9,6 +25,9 @@ let state = {
 
 // Define Getters
 const getters = {
+  conversations({ state }) {
+    return state.conversations;
+  },
   messagesData({ state }) {
     return state.messagesData;
   },
@@ -22,6 +41,9 @@ const getters = {
 
 // Define Actions
 const actions = {
+  setConversations({ state }, newValue) {
+    state.conversations = newValue;
+  },
   setMessagesData({ state }, newValue) {
     state.messagesData = newValue;
   },
