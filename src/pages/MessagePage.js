@@ -13,6 +13,8 @@ import {
 } from "framework7-react";
 
 const OPENAI_API_KEY = process.env.REACT_APP_OPENAI_API_KEY;
+let mediaRecorder;
+let chunks = [];
 
 export default ({ id }) => {
   const [typingMessage, setTypingMessage] = useState(false);
@@ -42,11 +44,6 @@ export default ({ id }) => {
   useEffect(() => {
     if (isRecording !== null && !isRecording) {
       setIsRecognizing(true);
-
-      setTimeout(() => {
-        // Simulate audio recognization time
-        setIsRecognizing(false);
-      }, 3000);
     }
   }, [isRecording]);
 
@@ -176,6 +173,71 @@ export default ({ id }) => {
   };
 
   const handleRecording = () => {
+    if (!isRecording) {
+      // Initialize
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        console.log("getUserMedia supported.");
+        navigator.mediaDevices
+          .getUserMedia({ audio: true })
+          .then((stream) => {
+            mediaRecorder = new MediaRecorder(stream);
+
+            mediaRecorder.ondataavailable = function (e) {
+              chunks.push(e.data);
+
+              if (mediaRecorder.state == "inactive") {
+                const blob = new Blob(chunks);
+
+                const fileOfBlob = new File([blob], "audio.wav", {
+                  type: "audio/wav",
+                });
+
+                const formData = new FormData();
+
+                formData.append("model", "whisper-1");
+                formData.append("response_format", "json");
+                formData.append("language", "en");
+                formData.append("file", fileOfBlob);
+
+                // send the chunks to openai whisper api
+                fetch(
+                  "https://cm633.fluentgpt.app/openai/v1/audio/transcriptions",
+                  {
+                    method: "POST",
+                    headers: {
+                      Authorization: `Bearer ${OPENAI_API_KEY}`,
+                    },
+                    body: formData,
+                  }
+                )
+                  .then((response) => response.json())
+                  .then((data) => {
+                    console.log("Success:", data);
+                    setMessageText(data.text);
+                  })
+                  .catch((error) => {
+                    console.error("Error:", error);
+                  })
+                  .finally(() => {
+                    setIsRecognizing(false);
+                    chunks = [];
+                  });
+              }
+            };
+
+            // Start the recording
+            mediaRecorder.start();
+          })
+          .catch((err) => {
+            console.error(`The following getUserMedia error occurred: ${err}`);
+          });
+      } else {
+        console.log("getUserMedia not supported on your browser!");
+      }
+    } else {
+      mediaRecorder.stop();
+    }
+
     setIsRecording(!isRecording);
   };
 
