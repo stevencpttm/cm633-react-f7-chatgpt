@@ -23,6 +23,9 @@ export default ({ id }) => {
 
   const [conversation, setConversation] = useState(null);
 
+  const [isRecording, setIsRecording] = useState(null);
+  const [isRecognizing, setIsRecognizing] = useState(false);
+
   useEffect(() => {
     f7ready(() => {
       // load corresponding conversation
@@ -35,6 +38,17 @@ export default ({ id }) => {
       }
     });
   }, []);
+
+  useEffect(() => {
+    if (isRecording !== null && !isRecording) {
+      setIsRecognizing(true);
+
+      setTimeout(() => {
+        // Simulate audio recognization time
+        setIsRecognizing(false);
+      }, 3000);
+    }
+  }, [isRecording]);
 
   const setMessagesData = (data) => {
     f7.store.dispatch("setMessagesData", data);
@@ -161,6 +175,10 @@ export default ({ id }) => {
     f7.store.dispatch("setConversations", newConversations);
   };
 
+  const handleRecording = () => {
+    setIsRecording(!isRecording);
+  };
+
   return (
     <Page>
       <Navbar title="Messages" backLink="Back">
@@ -171,8 +189,49 @@ export default ({ id }) => {
 
       <Messagebar
         value={messageText}
+        placeholder={isRecognizing ? "Recognizing Audio..." : "Message"}
         onInput={(e) => setMessageText(e.target.value)}
       >
+        <Link slot="inner-start" onClick={handleRecording}>
+          {!isRecording && (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              style={{ display: "inline-block", width: "24px", height: "24px" }}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z"
+              />
+            </svg>
+          )}
+
+          {isRecording && (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="red"
+              style={{ display: "inline-block", width: "24px", height: "24px" }}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M9 9.563C9 9.252 9.252 9 9.563 9h4.874c.311 0 .563.252.563.563v4.874c0 .311-.252.563-.563.563H9.564A.562.562 0 019 14.437V9.564z"
+              />
+            </svg>
+          )}
+        </Link>
         <Link slot="inner-end" onClick={sendMessage}>
           Send
         </Link>
